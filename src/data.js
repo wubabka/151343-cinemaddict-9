@@ -76,3 +76,13 @@ export const getFilter = () => ([
     count: 6
   },
 ]);
+
+
+export const getProfile = () => (
+  [
+    ``,
+    `novice`,
+    `fan`,
+    `movie buff`
+  ][Math.floor(Math.random() * 4)]
+);

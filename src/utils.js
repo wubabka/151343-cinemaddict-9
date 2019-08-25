@@ -1,6 +1,8 @@
 export const Position = {
+  BEFOREBEGIN: `beforebegin`,
+  BEFOREEND: `beforeend`,
   AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  AFTEREND: `afterend`
 };
 
 export const createElement = (template) => {
@@ -9,14 +11,19 @@ export const createElement = (template) => {
   return newElement.firstChild;
 };
 
-// Рендер и анрендер для компонент
-export const renderUtil = (container, element, place) => {
+export const render = (container, element, place) => {
   switch (place) {
-    case Position.AFTERBEGIN:
-      container.prepend(element);
+    case Position.BEFOREBEGIN:
+      container.before(element);
       break;
     case Position.BEFOREEND:
       container.append(element);
+      break;
+    case Position.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case Position.AFTEREND:
+      container.after(element);
       break;
   }
 };

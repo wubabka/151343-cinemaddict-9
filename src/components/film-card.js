@@ -1,4 +1,5 @@
 import {AbstractComponent} from "./abstract-component";
+
 export class FilmCard extends AbstractComponent {
   constructor({title, poster, description, rating, year, duration, genres, commentCount}) {
     super();

@@ -1,3 +1,5 @@
+import {getRandomInt} from './utils';
+
 export const getFilmCard = () => ({
   title: [
     `qq1`,
@@ -15,7 +17,7 @@ export const getFilmCard = () => ({
     `qq13`,
     `qq14`,
     `qq15`,
-  ][Math.floor(Math.random() * 15)],
+  ][getRandomInt(0, 15)],
   poster: [
     `made-for-each-other.png`,
     `popeye-meets-sinbad.png`,
@@ -24,7 +26,7 @@ export const getFilmCard = () => ({
     `the-dance-of-life.jpg`,
     `the-great-flamarion.jpg`,
     `the-man-with-the-golden-arm.jpg`
-  ][Math.floor(Math.random() * 7)],
+  ][getRandomInt(0, 7)],
   description: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -46,20 +48,44 @@ export const getFilmCard = () => ({
     2003,
     2004,
     2005
-  ][Math.floor(Math.random() * 6)],
+  ][getRandomInt(0, 6)],
   duration: [
     `1h 45m`,
     `1h 55m`,
     `2h 5m`,
     `2h 50m`,
     `2h`,
-  ][Math.floor(Math.random() * 5)],
+  ][getRandomInt(0, 5)],
   genres: [
     `Comedy`,
     `Horror`,
     `Drama`
-  ][Math.floor(Math.random() * 3)],
-  commentCount: Number(Math.floor(Math.random() * 100))
+  ][getRandomInt(0, 3)],
+  commentCount: Number(Math.floor(Math.random() * 100)),
+  emoji: [
+    `angry.png`,
+    `puke.png`,
+    `sleeping.png`,
+    `smile.png`,
+  ][getRandomInt(0, 4)],
+  commentText: [
+    `Interesting setting and a good cast`,
+    `Booooooooooring`,
+    `Very very old. Meh`,
+    `Almost two hours? Seriously?`,
+  ][getRandomInt(0, 4)],
+  author: [
+    `Tim Macoveev`,
+    `John Doe`,
+    `Heinz Herald`,
+    `Dan Duryea`,
+  ][getRandomInt(0, 4)],
+  day: [
+    `1 day ago`,
+    `2 days ago`,
+    `3 days ago`,
+    `today`
+  ][getRandomInt(0, 4)]
 });
 
 export const getFilter = () => ([
@@ -86,3 +112,30 @@ export const getProfile = () => (
     `movie buff`
   ][Math.floor(Math.random() * 4)]
 );
+
+// export const getComments = () => ({
+//   emoji: [
+//     `images/emoji/angry.png`,
+//     `images/emoji/puke.png`,
+//     `images/emoji/sleeping.png`,
+//     `images/emoji/smile.png`,
+//   ][getRandomInt(0, 4)],
+//   commentText: [
+//     `Interesting setting and a good cast`,
+//     `Booooooooooring`,
+//     `Very very old. Meh`,
+//     `Almost two hours? Seriously?`,
+//   ][getRandomInt(0, 4)],
+//   author: [
+//     `Tim Macoveev`,
+//     `John Doe`,
+//     `Heinz Herald`,
+//     `Dan Duryea`,
+//   ][getRandomInt(0, 4)],
+//   day: [
+//     `1 day ago`,
+//     `2 days ago`,
+//     `3 days ago`,
+//     `today`
+//   ][getRandomInt(0, 4)]
+// });

@@ -8,7 +8,6 @@ import {ShowMoreButton} from "../components/show-more-button";
 import {TopRated} from "../components/top-rated";
 import {MostCommented} from "../components/most-commented";
 import {FilmDetails} from "../components/film-details";
-import {MovieController} from "../controllers/movie-controller";
 
 export class PageController {
   constructor(container, filmCards) {

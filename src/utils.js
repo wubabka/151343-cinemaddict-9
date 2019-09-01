@@ -35,3 +35,7 @@ export const unrender = (element) => {
 };
 
 export const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min) + min);
+
+export const getRandomDate = (start, end) => {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().slice(0, 10);
+};

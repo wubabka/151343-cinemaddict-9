@@ -1,4 +1,4 @@
-import {getRandomInt} from './utils';
+import {getRandomInt, getRandomDate} from './utils';
 
 export const getFilmCard = () => ({
   title: [
@@ -41,14 +41,15 @@ export const getFilmCard = () => ({
     `Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
   ],
   rating: Number((Math.random() * (10 - 1) + 1).toFixed(2)),
-  year: [
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005
-  ][getRandomInt(0, 6)],
+  // year: [
+  //   2000,
+  //   2001,
+  //   2002,
+  //   2003,
+  //   2004,
+  //   2005
+  // ][getRandomInt(0, 6)],
+  year: getRandomDate(new Date(1900, 0, 1), new Date()),
   duration: [
     `1h 45m`,
     `1h 55m`,
@@ -112,30 +113,3 @@ export const getProfile = () => (
     `movie buff`
   ][Math.floor(Math.random() * 4)]
 );
-
-// export const getComments = () => ({
-//   emoji: [
-//     `images/emoji/angry.png`,
-//     `images/emoji/puke.png`,
-//     `images/emoji/sleeping.png`,
-//     `images/emoji/smile.png`,
-//   ][getRandomInt(0, 4)],
-//   commentText: [
-//     `Interesting setting and a good cast`,
-//     `Booooooooooring`,
-//     `Very very old. Meh`,
-//     `Almost two hours? Seriously?`,
-//   ][getRandomInt(0, 4)],
-//   author: [
-//     `Tim Macoveev`,
-//     `John Doe`,
-//     `Heinz Herald`,
-//     `Dan Duryea`,
-//   ][getRandomInt(0, 4)],
-//   day: [
-//     `1 day ago`,
-//     `2 days ago`,
-//     `3 days ago`,
-//     `today`
-//   ][getRandomInt(0, 4)]
-// });

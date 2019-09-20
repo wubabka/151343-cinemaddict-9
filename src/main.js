@@ -42,3 +42,4 @@ const filmCardMocks = new Array(CARD_COUNT)
 const pageController = new PageController(mainElement, filmCardMocks);
 pageController.init();
 // FilmsListContainer leave
+// Module7-task1

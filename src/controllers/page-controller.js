@@ -1,121 +1,162 @@
-import {Position, render, unrender} from "../utils";
-import {Films} from "../components/films";
-import {FilmsList} from "../components/films-list";
-import {FilmsListContainer} from "../components/films-list-container";
-import {FilmCard} from "../components/film-card";
-import {Sort} from "../components/sort";
-import {ShowMoreButton} from "../components/show-more-button";
-import {TopRated} from "../components/top-rated";
-import {MostCommented} from "../components/most-commented";
-import {FilmDetails} from "../components/film-details";
+import SearchForm from '../components/search-form';
+import NoResult from '../components/no-result';
+import NavController from '../controllers/nav-controller';
+import StatisticController from '../controllers/statistic-controller';
+import FilmsController from '../controllers/films-controller';
+import SearchController from '../controllers/search-controller';
+import ProfileController from '../controllers/profile-controller';
+import {API} from '../api';
+import {Position, render, Api} from '../utils';
 
-export class PageController {
-  constructor(container, filmCards) {
-    this._container = container;
-    this._filmCards = filmCards;
-    this._sort = new Sort();
-    this._films = new Films();
-    this._filmsList = new FilmsList();
-    this._filmsListContainer = new FilmsListContainer();
-    this._showMoreButton = new ShowMoreButton();
-    this._topRated = new TopRated();
-    this._mostCommented = new MostCommented();
+class PageController {
+  constructor(headerContainer, mainContainer) {
+    this._headerContainer = headerContainer;
+    this._mainContainer = mainContainer;
 
-    this._subscriptions = [];
+    this._searchForm = new SearchForm();
+    this._noResult = new NoResult();
+    this._api = new API({
+      endPoint: Api.END_POINT,
+      authorization: Api.AUTHORIZATION
+    });
+    this._filmCards = [];
+
     this._onDataChange = this._onDataChange.bind(this);
-    this._onChangeView = this._onChangeView.bind(this);
+    this._onCommentsChange = this._onCommentsChange.bind(this);
+    this._onInputClick = this._onInputClick.bind(this);
+    this._showStatistic = this._showStatistic.bind(this);
+    this._showFilteredFilmCards = this._showFilteredFilmCards.bind(this);
+    this._onReset = this._onReset.bind(this);
+
+    this._profileController = new ProfileController(this._headerContainer);
+    this._navController = new NavController(this._mainContainer, this._showStatistic, this._showFilteredFilmCards);
+    this._filmsController = new FilmsController(this._mainContainer, this._onDataChange, this._onCommentsChange);
+    this._statisticController = new StatisticController(this._mainContainer);
+    this._searchController = new SearchController(
+        this._mainContainer, this._searchForm, this._onReset, this._onDataChange, this._onCommentsChange);
   }
 
   init() {
-    render(this._container, this._sort.getElement(), Position.BEFOREEND);
-    render(this._container, this._films.getElement(), Position.BEFOREEND);
-    render(this._films.getElement(), this._filmsList.getElement(), Position.BEFOREEND);
-    render(this._filmsList.getElement(), this._filmsListContainer.getElement(), Position.BEFOREEND);
-    render(this._filmsList.getElement(), this._showMoreButton.getElement(), Position.BEFOREEND);
-    render(this._filmsList.getElement(), this._showMoreButton.getElement(), Position.BEFOREEND);
-    render(this._films.getElement(), this._topRated.getElement(), Position.BEFOREEND);
-    render(this._films.getElement(), this._mostCommented.getElement(), Position.BEFOREEND);
+    this._api.getFilms()
+      .then((filmCards) => {
+        this._filmCards = filmCards;
 
-    this._filmCards.forEach((filmCardMock) => this._renderFilmCard(filmCardMock));
+        this._renderHeader();
+        this._renderMain();
 
-    this._filmCards.slice(0, 2).forEach((filmCardMock) => this._renderTopRatedFilmCard(filmCardMock));
-
-    this._filmCards.slice(0, 2).forEach((filmCardMock) => this._renderMostCommentedFilmCard(filmCardMock));
-
-    this._sort.getElement().addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
-  }
-
-  _renderFilmCard(filmCard) {
-    const filmCardComponent = new FilmCard(filmCard);
-    const filmDetailsComponent = new FilmDetails(filmCard);
-
-    filmCardComponent.getElement()
-      .addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-
-        const footerElement = document.querySelector(`.footer`);
-        render(footerElement, filmDetailsComponent.getElement(), Position.AFTEREND);
-
-        const filmDetailsCloseBtn = document.querySelector(`.film-details__close-btn`);
-        filmDetailsCloseBtn.addEventListener(`click`, this._onHideFilmDetails);
+        document.querySelector(`.footer__statistics`)
+          .firstElementChild
+          .innerText = `${this._filmCards.length} movies inside`;
       });
-
-    const filmsListContainerElement = document.querySelector(`.films-list__container`);
-
-    render(filmsListContainerElement, filmCardComponent.getElement(), Position.BEFOREEND);
   }
 
-  _onDataChange(newData, oldData) {
-    this._filmCards[this._filmCards.findIndex((it) => it === oldData)] = newData;
-    this._renderBoard(this._filmCards);
+  _renderHeader() {
+    render(this._headerContainer, this._searchForm.getElement(), Position.BEFOREEND);
+    this._profileController.show(this._filmCards);
   }
 
-  _onChangeView() {
-    this._subscriptions.forEach((it) => it());
+  _renderMain() {
+    this._navController.show(this._filmCards);
+
+    if (!this._filmCards.length) {
+      render(this._mainContainer, this._noResult.getElement(), Position.BEFOREEND);
+    }
+
+    this._filmsController.show(this._filmCards);
+    this._searchForm
+      .getElement()
+      .querySelector(`.search__field`)
+      .addEventListener(`click`, this._onInputClick);
+
+    return null;
   }
 
-  _renderTopRatedFilmCard(filmCard) {
-    const filmCardComponent = new FilmCard(filmCard);
-    const filmsListContainerTopRatedElement = document.querySelector(`.films-list__container--top-rated`);
+  _showSearchForm() {
+    this._navController.hide();
+    this._statisticController.hide();
+    this._filmsController.hide();
 
-    render(filmsListContainerTopRatedElement, filmCardComponent.getElement(), Position.BEFOREEND);
+    this._searchController.show(this._filmCards);
   }
 
-  _renderMostCommentedFilmCard(filmCard) {
-    const filmCardComponent = new FilmCard(filmCard);
-    const filmsListContainerTopRatedElement = document.querySelector(`.films-list__container--most-commented`);
+  _showStatistic() {
+    this._filmsController.hide();
 
-    render(filmsListContainerTopRatedElement, filmCardComponent.getElement(), Position.BEFOREEND);
+    this._statisticController.show(this._filmCards);
   }
 
-  _onHideFilmDetails(evt) {
-    evt.preventDefault();
+  _showFilteredFilmCards(filmCards) {
+    this._statisticController.hide();
 
-    const filmDetails = document.querySelector(`.film-details`);
-    unrender(filmDetails);
+    this._filmsController.show(filmCards);
   }
 
-  _onSortLinkClick(evt) {
-    evt.preventDefault();
+  _onDataChange(filmCard, isSearchOpen = false) {
+    this._api.updateFilm({
+      id: filmCard.id,
+      data: filmCard.toRAW(),
+    })
+      .then(() => this._api.getFilms())
+      .then((filmCards) => {
+        if (isSearchOpen) {
+          this._showSearchForm();
+        }
 
-    if (evt.target.tagName !== `A`) {
+        this._filmCards = filmCards;
+
+        this._profileController.show(this._filmCards);
+        this._navController.show(this._filmCards);
+        this._filmsController.show(this._filmCards);
+      });
+  }
+
+  _onCommentsChange({action, comment = null, filmId = null, commentId = null}) {
+    switch (action) {
+      case `get`:
+        return this._api.getComments({filmId});
+      case `create`:
+        this._api.createComment({
+          comment,
+          filmId,
+        })
+          .then(() => this._api.getFilms())
+          .then((filmCards) => {
+            this._filmCards = filmCards;
+            this._filmsController.show(this._filmCards);
+          });
+        break;
+      case `delete`:
+        this._api.deleteComment({
+          filmId,
+          commentId
+        })
+          .then(() => this._api.getFilms())
+          .then((filmCards) => {
+            this._filmCards = filmCards;
+            this._filmsController.show(this._filmCards);
+          });
+    }
+
+    return null;
+  }
+
+  _onInputClick(evt) {
+    if (evt.key === `Enter`) {
+      evt.preventDefault();
+
       return;
     }
 
-    this._filmsListContainer.getElement().innerHTML = ``;
+    this._showSearchForm();
+  }
 
-    switch (evt.target.dataset.sortType) {
-      case `date`:
-        const sortedByDateFilmCards = this._filmCards.slice().sort((a, b) => a.year - b.year);
-        sortedByDateFilmCards.forEach((filmCardMock) => this._renderFilmCard(filmCardMock));
-        break;
-      case `rating`:
-        const sortedByRatingFilmCards = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
-        sortedByRatingFilmCards.forEach((filmCardMock) => this._renderFilmCard(filmCardMock));
-        break;
-      case `default`:
-        this._filmCards.forEach((filmCardMock) => this._renderFilmCard(filmCardMock));
-        break;
-    }
+  _onReset() {
+    this._statisticController.hide();
+    this._searchController.hide();
+
+    this._navController.show(this._filmCards);
+    this._filmsController.show(this._filmCards);
   }
 }
+
+export default PageController;

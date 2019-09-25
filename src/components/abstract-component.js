@@ -24,3 +24,5 @@ export class AbstractComponent {
     throw new Error(`Abstract method not implemented: getTemplate`);
   }
 }
+
+export default AbstractComponent;

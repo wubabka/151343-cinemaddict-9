@@ -24,7 +24,7 @@ git push
 ¹ В `academy` должна быть ссылка на репозиторий Академии. Если его там нет, добавьте:
 
 ```
-git remote add academy git@github.com:htmlacademy-ecmascript/151343-cinemaddict-9.git
+git remote add academy git@github.com:htmlacademy-ecmascript/644345-cinemaddict-9.git
 ```
 
 Когда вы обновили `master`, создайте ветку для нового задания:

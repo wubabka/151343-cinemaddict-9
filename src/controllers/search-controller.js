@@ -92,10 +92,7 @@ class SearchController {
     return null;
   }
 
-  _onResetClick(evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
-
+  _onResetClick() {
     this._searchField.value = ``;
     this._searchField.blur();
     this._searchInput = ``;

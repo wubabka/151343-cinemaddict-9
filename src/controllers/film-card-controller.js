@@ -35,11 +35,9 @@ class FilmCardController {
   }
 
   setView(view = `default`) {
-    if (view === `default`) {
-      if (document.body.contains(this._filmCardDetailsElement)) {
-        unrender(this._filmCardDetailsElement);
-        this._filmCardDetails.removeElement();
-      }
+    if (document.body.contains(this._filmCardDetailsElement)) {
+      unrender(this._filmCardDetailsElement);
+      this._filmCardDetails.removeElement();
     }
 
     if (view === `details`) {
@@ -131,7 +129,7 @@ class FilmCardController {
   _onChangeUserRating(evt) {
     this._onDataChange(Object.assign(this._data, {userRating: evt.target.value || 0}));
 
-    this.setView(`details`);
+    evt.target.parentElement.style.pointerEvents = `none`;
   }
 
   _onCommentDelete(evt) {
@@ -147,6 +145,8 @@ class FilmCardController {
   _onAddCommentEnterKey(evt) {
     if (!evt.target.value.trim() || !(evt.key === `Enter` && (evt.ctrlKey || evt.metaKey))) {
       return;
+    } else {
+      evt.target.setAttribute(`disabled`, `disabled`);
     }
 
     evt.preventDefault();
@@ -198,10 +198,6 @@ class FilmCardController {
     };
 
     this._onDataChange(Object.assign(this._data, getNewPropertiesValue()));
-
-    if (evt.target.tagName === `INPUT`) {
-      this.setView(`details`);
-    }
   }
 }
 

@@ -1076,7 +1076,10 @@ button {
   padding-top: 50px;
   padding-bottom: 50px;
 }
-
+.loading {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
 @keyframes shake {
   0%,
   100% {
@@ -1098,7 +1101,6 @@ button {
     transform: translateX(5px);
   }
 }
-
 .shake {
   animation: shake 0.6s;
 }

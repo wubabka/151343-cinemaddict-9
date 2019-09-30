@@ -1,12 +1,13 @@
 import SearchForm from '../components/search-form';
 import NoResult from '../components/no-result';
+import Loading from '../components/loading';
 import NavController from '../controllers/nav-controller';
 import StatisticController from '../controllers/statistic-controller';
 import FilmsController from '../controllers/films-controller';
 import SearchController from '../controllers/search-controller';
 import ProfileController from '../controllers/profile-controller';
 import {API} from '../api';
-import {Position, render, Api} from '../utils';
+import {Position, render, unrender, Api} from '../utils';
 
 class PageController {
   constructor(headerContainer, mainContainer) {
@@ -20,6 +21,7 @@ class PageController {
       authorization: Api.AUTHORIZATION
     });
     this._filmCards = [];
+    this._loading = new Loading();
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onCommentsChange = this._onCommentsChange.bind(this);
@@ -37,12 +39,16 @@ class PageController {
   }
 
   init() {
+    render(this._mainContainer, this._loading.getElement(), Position.AFTERBEGIN);
+
     this._api.getFilms()
       .then((filmCards) => {
         this._filmCards = filmCards;
 
         this._renderHeader();
         this._renderMain();
+
+        unrender(this._loading.getElement());
 
         document.querySelector(`.footer__statistics`)
           .firstElementChild
@@ -59,6 +65,8 @@ class PageController {
     this._navController.show(this._filmCards);
 
     if (!this._filmCards.length) {
+      this._filmsController.hide();
+
       render(this._mainContainer, this._noResult.getElement(), Position.BEFOREEND);
     }
 
@@ -92,6 +100,8 @@ class PageController {
   }
 
   _onDataChange(filmCard, isSearchOpen = false) {
+    const userRating = document.querySelector(`.film-details__user-rating-score`);
+
     this._api.updateFilm({
       id: filmCard.id,
       data: filmCard.toRAW(),
@@ -107,6 +117,20 @@ class PageController {
         this._profileController.show(this._filmCards);
         this._navController.show(this._filmCards);
         this._filmsController.show(this._filmCards);
+
+        userRating.style.pointerEvents = `auto`;
+      })
+      .catch(() => {
+        userRating.classList.remove(`shake`);
+        userRating.classList.add(`shake`);
+        userRating.style.pointerEvents = `auto`;
+
+        const userRatingList = document.querySelectorAll(`.film-details__user-rating-input`);
+
+        userRatingList.forEach((el) => {
+          el.checked = false;
+          el.removeAttribute(`checked`);
+        });
       });
   }
 
@@ -115,6 +139,8 @@ class PageController {
       case `get`:
         return this._api.getComments({filmId});
       case `create`:
+        const commentInput = document.querySelector(`.film-details__comment-input`);
+
         this._api.createComment({
           comment,
           filmId,
@@ -123,6 +149,12 @@ class PageController {
           .then((filmCards) => {
             this._filmCards = filmCards;
             this._filmsController.show(this._filmCards);
+            commentInput.removeAttribute(`disabled`);
+            commentInput.value = ``;
+          })
+          .catch(() => {
+            commentInput.classList.add(`shake`);
+            commentInput.removeAttribute(`disabled`);
           });
         break;
       case `delete`:

@@ -1,7 +1,7 @@
 import FilmCard from '../components/film-card';
 import FilmCardDetails from '../components/film-card-details';
 import {Position, render, unrender, Api} from '../utils';
-import {API} from '../api';
+import {ApiClass} from '../api';
 
 class FilmCardController {
   constructor(container, data, onChangeView, onDataChange, onCommentsChange) {
@@ -14,7 +14,7 @@ class FilmCardController {
     this._filmCard = new FilmCard(data);
     this._filmCardElement = this._filmCard.getElement();
     this._filmCardDetails = {};
-    this._api = new API({
+    this._api = new ApiClass({
       endPoint: Api.END_POINT,
       authorization: Api.AUTHORIZATION
     });

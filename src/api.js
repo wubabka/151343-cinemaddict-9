@@ -13,7 +13,7 @@ const checkStatus = (response) => {
   }
 };
 
-export const API = class {
+export const ApiClass = class {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;

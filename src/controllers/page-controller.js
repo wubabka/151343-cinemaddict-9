@@ -6,7 +6,7 @@ import StatisticController from '../controllers/statistic-controller';
 import FilmsController from '../controllers/films-controller';
 import SearchController from '../controllers/search-controller';
 import ProfileController from '../controllers/profile-controller';
-import {API} from '../api';
+import {ApiClass} from '../api';
 import {Position, render, unrender, Api} from '../utils';
 
 class PageController {
@@ -16,7 +16,7 @@ class PageController {
 
     this._searchForm = new SearchForm();
     this._noResult = new NoResult();
-    this._api = new API({
+    this._api = new ApiClass({
       endPoint: Api.END_POINT,
       authorization: Api.AUTHORIZATION
     });
@@ -121,9 +121,11 @@ class PageController {
         userRating.style.pointerEvents = `auto`;
       })
       .catch(() => {
-        userRating.classList.remove(`shake`);
-        userRating.classList.add(`shake`);
-        userRating.style.pointerEvents = `auto`;
+        if (userRating) {
+          userRating.classList.remove(`shake`);
+          userRating.classList.add(`shake`);
+          userRating.style.pointerEvents = `auto`;
+        }
 
         const userRatingList = document.querySelectorAll(`.film-details__user-rating-input`);
 
